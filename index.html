@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#151922">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VINI Business">
+<link rel="manifest" href="manifest.webmanifest">
+<title>VINI Business Solutions</title>
+<style>
+:root{--ink:#171b24;--gold:#c7a45b;--paper:#f5f5f3;--muted:#747985;--line:#e5e6e8;--green:#18794e;--red:#b33b3b}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:82px}
+header{background:var(--ink);color:white;padding:calc(18px + env(safe-area-inset-top)) 18px 18px;position:sticky;top:0;z-index:4}
+.brand{display:flex;align-items:center;gap:11px}.mark{width:42px;height:42px;border:1px solid var(--gold);color:var(--gold);display:grid;place-items:center;border-radius:10px;font-weight:800;letter-spacing:-1px}.brand small{display:block;color:#d6bd88;font-size:10px;letter-spacing:1.4px;margin-top:3px}
+main{max-width:760px;margin:auto;padding:16px}.page{display:none}.page.active{display:block}.heading{display:flex;align-items:center;justify-content:space-between;margin:6px 0 14px}.heading h2{font-size:21px;margin:0}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.card{background:white;border:1px solid var(--line);border-radius:14px;padding:14px}.card small,.muted{color:var(--muted)}.amount{font-size:22px;font-weight:750;margin-top:7px;letter-spacing:-.5px}.gold{color:#9c762e}.positive{color:var(--green)}.negative{color:var(--red)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.btn{border:0;border-radius:10px;padding:11px 14px;background:var(--ink);color:white;font-weight:650;font-size:14px}.btn.goldbtn{background:var(--gold);color:#171b24}.btn.light{background:white;color:var(--ink);border:1px solid var(--line)}.btn.danger{background:#fff0f0;color:var(--red);border:1px solid #f2d4d4}
+.panel{background:white;border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}.panel h3{margin:0 0 12px;font-size:16px}
+label{display:block;font-size:12px;color:#626875;font-weight:650;margin:11px 0 5px}input,select,textarea{width:100%;border:1px solid #d9dce1;border-radius:9px;padding:11px;font:inherit;background:white;color:var(--ink)}textarea{min-height:72px;resize:vertical}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}.full{grid-column:1/-1}
+.rowitem{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);align-items:center}.rowitem:last-child{border-bottom:0}.rowitem strong{display:block}.rowitem small{color:var(--muted)}.right{text-align:right;white-space:nowrap}.pill{display:inline-block;padding:4px 8px;border-radius:30px;background:#f0eee8;color:#80652f;font-size:11px;font-weight:700}
+nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px 3px calc(8px + env(safe-area-inset-bottom));z-index:5}nav button{background:none;border:0;color:#737985;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px;min-width:0}nav button span{font-size:19px}nav button.active{color:#9c762e;font-weight:800}
+.empty{padding:20px 8px;text-align:center;color:var(--muted)}.progress{height:8px;background:#eee;border-radius:9px;overflow:hidden;margin-top:8px}.progress i{display:block;height:100%;background:var(--gold)}
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#171b24;color:white;padding:10px 14px;border-radius:10px;display:none;z-index:9}
+@media(max-width:390px){nav button{font-size:9px}nav button span{font-size:17px}.amount{font-size:19px}.formgrid{grid-template-columns:1fr}}
+@media print{header,nav,.actions,.no-print{display:none!important}body{background:white;padding:0}main{padding:0}.page{display:none!important}.page.active{display:block!important}#invoicePrint[hidden]{display:none!important}}
+</style>
+</head>
+<body>
+<header><div class="brand"><div class="mark">V</div><div><b>VINI BUSINESS SOLUTIONS</b><small>BUSINESS MANAGEMENT</small></div></div></header>
+<main>
+<section id="dashboard" class="page active">
+ <div class="heading"><h2>Overview</h2><span class="pill" id="todayLabel"></span></div>
+ <div class="cards">
+  <div class="card"><small>Total sales</small><div class="amount" id="dashSales">MVR 0.00</div></div>
+  <div class="card"><small>Total expenses</small><div class="amount" id="dashExpenses">MVR 0.00</div></div>
+  <div class="card"><small>Net income</small><div class="amount positive" id="dashNet">MVR 0.00</div></div>
+  <div class="card"><small>Ongoing works</small><div class="amount" id="dashProjects">0</div></div>
+  <div class="card"><small>Unpaid sales</small><div class="amount" id="dashUnpaid">MVR 0.00</div></div>
+  <div class="card"><small>Clients</small><div class="amount" id="dashClients">0</div></div>
+ </div>
+ <div class="actions"><button class="btn goldbtn" onclick="showPage('sales');openForm('saleForm')">＋ Record sale</button><button class="btn" onclick="showPage('expenses');openForm('expenseForm')">＋ Add expense</button></div>
+ <div class="panel"><h3>Recent activity</h3><div id="recentList" class="empty">No activity recorded yet.</div></div>
+ <div class="panel"><h3>Quick backup</h3><p class="muted">Your records are saved on this device. Export a backup regularly.</p><button class="btn light" onclick="backup()">Export data backup</button> <button class="btn light" onclick="document.getElementById('restoreFile').click()">Restore backup</button><input id="restoreFile" type="file" accept="application/json" hidden onchange="restore(event)"></div>
+</section>
+
+<section id="sales" class="page">
+ <div class="heading"><h2>Service sales</h2><button class="btn goldbtn" onclick="openForm('saleForm')">＋ Add sale</button></div>
+ <div class="panel" id="saleForm" hidden><h3>Record a sale</h3><form onsubmit="saveSale(event)"><div class="formgrid">
+ <div class="full"><label>Client</label><select id="saleClient" required></select></div>
+ <div><label>Service</label><select id="saleService"><option>Business registration</option><option>Financial services</option><option>Consultancy</option><option>Document preparation</option><option>Other</option></select></div>
+ <div><label>Sale date</label><input id="saleDate" type="date" required></div>
+ <div><label>Amount (MVR)</label><input id="saleAmount" type="number" min="0" step=".01" required></div>
+ <div><label>Amount received (MVR)</label><input id="salePaid" type="number" min="0" step=".01" value="0" required></div>
+ <div class="full"><label>Description / reference</label><input id="saleNote" placeholder="Optional details"></div>
+ </div><div class="actions"><button class="btn goldbtn">Save sale</button><button type="button" class="btn light" onclick="closeForm('saleForm')">Cancel</button></div></form></div>
+ <div class="panel"><input id="saleSearch" placeholder="Search sales or clients" oninput="renderSales()"><div id="salesList"></div></div>
+</section>
+
+<section id="expenses" class="page">
+ <div class="heading"><h2>Expenses</h2><button class="btn goldbtn" onclick="openForm('expenseForm')">＋ Add expense</button></div>
+ <div class="panel" id="expenseForm" hidden><h3>Record an expense</h3><form onsubmit="saveExpense(event)"><div class="formgrid">
+ <div><label>Date</label><input id="expenseDate" type="date" required></div><div><label>Category</label><select id="expenseCategory"><option>Transport</option><option>Office supplies</option><option>Utilities</option><option>Salary / wages</option><option>Software / internet</option><option>Marketing</option><option>Other</option></select></div>
+ <div class="full"><label>Description</label><input id="expenseNote" required placeholder="What was this expense for?"></div><div class="full"><label>Amount (MVR)</label><input id="expenseAmount" type="number" min="0.01" step=".01" required></div>
+ </div><div class="actions"><button class="btn goldbtn">Save expense</button><button type="button" class="btn light" onclick="closeForm('expenseForm')">Cancel</button></div></form></div>
+ <div class="panel"><div id="expensesList"></div></div>
+</section>
+
+<section id="projects" class="page">
+ <div class="heading"><h2>Ongoing works</h2><button class="btn goldbtn" onclick="openForm('projectForm')">＋ New work</button></div>
+ <div class="panel" id="projectForm" hidden><h3>Create work / project</h3><form onsubmit="saveProject(event)"><div class="formgrid">
+ <div class="full"><label>Project name</label><input id="projectName" required></div><div class="full"><label>Client</label><select id="projectClient" required></select></div>
+ <div><label>Start date</label><input id="projectDate" type="date" required></div><div><label>Due date</label><input id="projectDue" type="date"></div>
+ <div><label>Project value (MVR)</label><input id="projectValue" type="number" min="0" step=".01" value="0"></div><div><label>Progress (%)</label><input id="projectProgress" type="number" min="0" max="100" value="0"></div>
+ <div class="full"><label>Status</label><select id="projectStatus"><option>Not started</option><option>In progress</option><option>Waiting for client</option><option>Completed</option><option>On hold</option></select></div>
+ <div class="full"><label>Notes / next step</label><textarea id="projectNotes"></textarea></div></div><div class="actions"><button class="btn goldbtn">Save project</button><button type="button" class="btn light" onclick="closeForm('projectForm')">Cancel</button></div></form></div>
+ <div id="projectsList"></div>
+</section>
+
+<section id="clients" class="page">
+ <div class="heading"><h2>Clients</h2><button class="btn goldbtn" onclick="openForm('clientForm')">＋ Add client</button></div>
+ <div class="panel" id="clientForm" hidden><h3>New client</h3><form onsubmit="saveClient(event)"><label>Client / business name</label><input id="clientName" required><div class="formgrid"><div><label>Phone</label><input id="clientPhone" type="tel"></div><div><label>Email</label><input id="clientEmail" type="email"></div><div class="full"><label>Address / notes</label><textarea id="clientNotes"></textarea></div></div><div class="actions"><button class="btn goldbtn">Save client</button><button type="button" class="btn light" onclick="closeForm('clientForm')">Cancel</button></div></form></div>
+ <div class="panel"><input id="clientSearch" placeholder="Search clients" oninput="renderClients()"><div id="clientsList"></div></div>
+</section>
+
+<section id="reports" class="page">
+ <div class="heading"><h2>Reports</h2><button class="btn light" onclick="exportCSV()">Export CSV</button></div>
+ <div class="panel"><label>Report period</label><div class="formgrid"><div><label>From</label><input id="reportFrom" type="date" onchange="renderReports()"></div><div><label>To</label><input id="reportTo" type="date" onchange="renderReports()"></div></div>
+ <div class="cards" style="margin-top:14px"><div class="card"><small>Sales</small><div class="amount" id="repSales">MVR 0.00</div></div><div class="card"><small>Expenses</small><div class="amount" id="repExpenses">MVR 0.00</div></div><div class="card"><small>Net income</small><div class="amount positive" id="repNet">MVR 0.00</div></div><div class="card"><small>Outstanding</small><div class="amount" id="repOutstanding">MVR 0.00</div></div></div></div>
+ <div class="panel"><h3>Sales by service</h3><div id="serviceBreakdown" class="muted">No sales in this period.</div></div>
+ <div class="panel"><h3>Expenses by category</h3><div id="expenseBreakdown" class="muted">No expenses in this period.</div></div>
+ <div class="actions"><button class="btn goldbtn" onclick="window.print()">Print / Save report as PDF</button></div>
+</section>
+
+<section id="invoice" class="page">
+ <div class="heading"><h2>Invoice</h2><button class="btn goldbtn" onclick="makeInvoice()">＋ Create invoice</button></div>
+ <div class="panel"><p class="muted">Create a printable invoice from a recorded sale. Use your iPhone Share / Print options to save as PDF.</p><label>Select sale</label><select id="invoiceSale"></select><div class="actions"><button class="btn" onclick="printInvoice()">Preview / Print invoice</button></div></div>
+ <div id="invoicePrint" class="panel" hidden></div>
+</section>
+</main>
+<nav>
+ <button class="active" data-page="dashboard" onclick="showPage('dashboard')"><span>⌂</span>Home</button>
+ <button data-page="sales" onclick="showPage('sales')"><span>↗</span>Sales</button>
+ <button data-page="expenses" onclick="showPage('expenses')"><span>−</span>Expenses</button>
+ <button data-page="projects" onclick="showPage('projects')"><span>▣</span>Works</button>
+ <button data-page="clients" onclick="showPage('clients')"><span>♙</span>Clients</button>
+ <button data-page="reports" onclick="showPage('reports')"><span>▤</span>Reports</button>
+</nav>
+<div id="toast"></div>
+<script>
+const KEY='vini_business_v1';
+let db=JSON.parse(localStorage.getItem(KEY)||'{"clients":[],"sales":[],"expenses":[],"projects":[]}');
+const $=id=>document.getElementById(id), today=()=>new Date().toISOString().slice(0,10);
+const money=n=>'MVR '+Number(n||0).toLocaleString('en-MV',{minimumFractionDigits:2,maximumFractionDigits:2});
+const id=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+function save(){localStorage.setItem(KEY,JSON.stringify(db));renderAll()}
+function toast(s){$('toast').textContent=s;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',2200)}
+function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));$(p).classList.add('active');document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===p));if(p==='invoice')fillInvoice()}
+function openForm(id){$(id).hidden=false}function closeForm(id){$(id).hidden=true}
+function clientName(cid){return db.clients.find(c=>c.id===cid)?.name||'Deleted client'}
+function fillClientSelects(){['saleClient','projectClient'].forEach(id=>{let s=$(id),v=s.value;s.innerHTML='<option value="">Choose client</option>'+db.clients.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');s.value=v})}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function saveClient(e){e.preventDefault();db.clients.push({id:id(),name:$('clientName').value.trim(),phone:$('clientPhone').value,email:$('clientEmail').value,notes:$('clientNotes').value});e.target.reset();closeForm('clientForm');save();toast('Client saved')}
+function saveSale(e){e.preventDefault();let amount=+$('saleAmount').value,paid=+$('salePaid').value;if(paid>amount){toast('Received amount cannot exceed sale amount');return}db.sales.push({id:id(),clientId:$('saleClient').value,service:$('saleService').value,date:$('saleDate').value,amount,paid,note:$('saleNote').value});e.target.reset();$('saleDate').value=today();closeForm('saleForm');save();toast('Sale recorded')}
+function saveExpense(e){e.preventDefault();db.expenses.push({id:id(),date:$('expenseDate').value,category:$('expenseCategory').value,note:$('expenseNote').value,amount:+$('expenseAmount').value});e.target.reset();$('expenseDate').value=today();closeForm('expenseForm');save();toast('Expense recorded')}
+function saveProject(e){e.preventDefault();db.projects.push({id:id(),name:$('projectName').value,clientId:$('projectClient').value,date:$('projectDate').value,due:$('projectDue').value,value:+$('projectValue').value,progress:+$('projectProgress').value,status:$('projectStatus').value,notes:$('projectNotes').value});e.target.reset();$('projectDate').value=today();closeForm('projectForm');save();toast('Work saved')}
+function del(type,uid){if(!confirm('Delete this record?'))return;db[type]=db[type].filter(x=>x.id!==uid);save()}
+function renderSales(){let q=($('saleSearch')?.value||'').toLowerCase(),a=db.sales.filter(s=>(s.service+' '+s.note+' '+clientName(s.clientId)).toLowerCase().includes(q)).sort((a,b)=>b.date.localeCompare(a.date));$('salesList').innerHTML=a.length?a.map(s=>`<div class="rowitem"><div><strong>${esc(s.service)} · ${esc(clientName(s.clientId))}</strong><small>${s.date} · ${esc(s.note||'')}</small><br><span class="pill">${s.paid>=s.amount?'Paid':s.paid?'Part paid':'Unpaid'}</span></div><div class="right"><strong>${money(s.amount)}</strong><small>Received ${money(s.paid)}</small><br><button class="btn light" onclick="del('sales','${s.id}')">Delete</button></div></div>`).join(''):'<div class="empty">No sales recorded.</div>'}
+function renderExpenses(){$('expensesList').innerHTML=db.expenses.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(x=>`<div class="rowitem"><div><strong>${esc(x.note)}</strong><small>${x.date} · ${esc(x.category)}</small></div><div class="right"><strong>${money(x.amount)}</strong><br><button class="btn light" onclick="del('expenses','${x.id}')">Delete</button></div></div>`).join('')||'<div class="empty">No expenses recorded.</div>'}
+function renderProjects(){$('projectsList').innerHTML=db.projects.map(p=>`<div class="panel"><div class="rowitem" style="border:0;padding-top:0"><div><strong>${esc(p.name)}</strong><small>${esc(clientName(p.clientId))} · Due ${p.due||'Not set'}</small></div><span class="pill">${esc(p.status)}</span></div><div class="progress"><i style="width:${Math.max(0,Math.min(100,p.progress))}%"></i></div><div class="rowitem"><small>${p.progress}% complete · ${money(p.value)}</small><button class="btn light" onclick="editProgress('${p.id}')">Update</button></div><small>${esc(p.notes||'')}</small></div>`).join('')||'<div class="empty">No ongoing works yet.</div>'}
+function editProgress(uid){let p=db.projects.find(x=>x.id===uid),v=prompt('Progress percentage (0–100)',p.progress);if(v===null)return;v=Number(v);if(!Number.isFinite(v)||v<0||v>100){toast('Enter a number from 0 to 100');return}p.progress=v;if(v===100)p.status='Completed';save()}
+function renderClients(){let q=($('clientSearch')?.value||'').toLowerCase();let a=db.clients.filter(c=>(c.name+' '+c.phone+' '+c.email).toLowerCase().includes(q));$('clientsList').innerHTML=a.map(c=>{let due=db.sales.filter(s=>s.clientId===c.id).reduce((n,s)=>n+s.amount-s.paid,0);return `<div class="rowitem"><div><strong>${esc(c.name)}</strong><small>${esc(c.phone||'')} ${esc(c.email||'')}</small></div><div class="right"><strong>${money(due)}</strong><small>Outstanding</small><br><button class="btn light" onclick="del('clients','${c.id}')">Delete</button></div></div>`}).join('')||'<div class="empty">No clients added.</div>'}
+function renderReports(){let f=$('reportFrom').value,t=$('reportTo').value,ok=d=>(!f||d>=f)&&(!t||d<=t),sales=db.sales.filter(x=>ok(x.date)),expenses=db.expenses.filter(x=>ok(x.date));let st=sales.reduce((n,x)=>n+x.amount,0),ex=expenses.reduce((n,x)=>n+x.amount,0),out=sales.reduce((n,x)=>n+x.amount-x.paid,0);$('repSales').textContent=money(st);$('repExpenses').textContent=money(ex);$('repNet').textContent=money(st-ex);$('repOutstanding').textContent=money(out);let group=(arr,key)=>{let o={};arr.forEach(x=>o[x[key]]=(o[x[key]]||0)+(x.amount||0));return Object.entries(o).map(([k,v])=>`<div class="rowitem"><span>${esc(k)}</span><b>${money(v)}</b></div>`).join('')||'<div class="muted">No records.</div>'};$('serviceBreakdown').innerHTML=group(sales,'service');$('expenseBreakdown').innerHTML=group(expenses,'category')}
+function renderDashboard(){let s=db.sales.reduce((n,x)=>n+x.amount,0),e=db.expenses.reduce((n,x)=>n+x.amount,0),u=db.sales.reduce((n,x)=>n+x.amount-x.paid,0);$('dashSales').textContent=money(s);$('dashExpenses').textContent=money(e);$('dashNet').textContent=money(s-e);$('dashProjects').textContent=db.projects.filter(p=>p.status!=='Completed').length;$('dashUnpaid').textContent=money(u);$('dashClients').textContent=db.clients.length;let items=[...db.sales.map(x=>({date:x.date,label:'Sale · '+x.service,value:x.amount})),...db.expenses.map(x=>({date:x.date,label:'Expense · '+x.note,value:-x.amount}))].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);$('recentList').innerHTML=items.map(x=>`<div class="rowitem"><div><strong>${esc(x.label)}</strong><small>${x.date}</small></div><b class="${x.value<0?'negative':'positive'}">${money(x.value)}</b></div>`).join('')||'<div class="empty">No activity recorded yet.</div>'}
+function renderAll(){fillClientSelects();renderDashboard();renderSales();renderExpenses();renderProjects();renderClients();renderReports();fillInvoice()}
+function backup(){let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='vini-business-backup-'+today()+'.json';a.click();URL.revokeObjectURL(a.href)}
+function restore(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!x.clients||!x.sales||!x.expenses||!x.projects)throw 0;if(!confirm('Replace all current VINI records with this backup?'))return;db=x;save();toast('Backup restored')}catch{alert('Invalid backup file')}};r.readAsText(f)}
+function exportCSV(){let rows=[['Type','Date','Client / Description','Category / Service','Amount MVR','Paid MVR']];db.sales.forEach(x=>rows.push(['Sale',x.date,clientName(x.clientId),x.service,x.amount,x.paid]));db.expenses.forEach(x=>rows.push(['Expense',x.date,x.note,x.category,x.amount,'']));let csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='vini-report-'+today()+'.csv';a.click();URL.revokeObjectURL(a.href)}
+function fillInvoice(){$('invoiceSale').innerHTML=db.sales.map(s=>`<option value="${s.id}">${s.date} · ${esc(clientName(s.clientId))} · ${money(s.amount)}</option>`).join('')||'<option value="">No sales recorded</option>'}
+function makeInvoice(){printInvoice()}
+function printInvoice(){let s=db.sales.find(x=>x.id===$('invoiceSale').value);if(!s){toast('Record a sale first');return}let no='VINI-'+s.date.replaceAll('-','')+'-'+s.id.slice(-4).toUpperCase();$('invoicePrint').hidden=false;$('invoicePrint').innerHTML=`<div style="font-family:Arial;color:#171b24;padding:12px"><div style="display:flex;justify-content:space-between;gap:20px"><div><h2 style="margin:0;color:#9c762e">VINI BUSINESS SOLUTIONS</h2><p>Maldives</p></div><div style="text-align:right"><h1>INVOICE</h1><b>${no}</b><p>Date: ${s.date}</p></div></div><hr><h3>Bill to</h3><b>${esc(clientName(s.clientId))}</b><p>${esc(db.clients.find(c=>c.id===s.clientId)?.phone||'')}</p><table style="width:100%;border-collapse:collapse"><tr><th style="text-align:left;border-bottom:1px solid #aaa;padding:9px">Description</th><th style="text-align:right;border-bottom:1px solid #aaa;padding:9px">Amount</th></tr><tr><td style="padding:12px 9px">${esc(s.service)}<br><small>${esc(s.note||'')}</small></td><td style="text-align:right;padding:12px 9px">${money(s.amount)}</td></tr></table><hr><p style="text-align:right">Total: <b>${money(s.amount)}</b><br>Paid: ${money(s.paid)}<br>Balance due: <b>${money(s.amount-s.paid)}</b></p><p style="margin-top:55px">Thank you for your business.</p></div>`;window.print()}
+$('todayLabel').textContent=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+['saleDate','expenseDate','projectDate'].forEach(x=>$(x).value=today());
+$('reportFrom').value=new Date(new Date().getFullYear(),new Date().getMonth(),1).toISOString().slice(0,10);$('reportTo').value=today();
+renderAll();
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
+</script>
+</body></html>
