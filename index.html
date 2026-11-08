@@ -49,7 +49,37 @@ nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid
  <div class="heading"><h2>Service sales</h2><button class="btn goldbtn" onclick="openForm('saleForm')">＋ Add sale</button></div>
  <div class="panel" id="saleForm" hidden><h3>Record a sale</h3><form onsubmit="saveSale(event)"><div class="formgrid">
  <div class="full"><label>Client</label><select id="saleClient" required></select></div>
- <div><label>Service</label><select id="saleService"><option>Business registration</option><option>Financial services</option><option>Consultancy</option><option>Document preparation</option><option>Other</option></select></div>
+ <div><label>Service</label><select id="saleService">
+
+  <option>Business Registration</option>
+
+  <option>GST Filing</option>
+
+  <option>Income Tax Filing</option>
+
+  <option>Quota Service</option>
+
+  <option>Expat Fees Payment</option>
+
+  <option>Vehicle Registration</option>
+
+  <option>Vehicle Fees Payment</option>
+
+  <option>Financial Statements</option>
+
+  <option>Loan Applications</option>
+
+  <option>Club Registration</option>
+
+  <option>ID Card / Passport Services</option>
+
+  <option>Bids and Tender Services</option>
+
+  <option>Assignments</option>
+
+  <option>Other Services</option>
+
+</select>
  <div><label>Sale date</label><input id="saleDate" type="date" required></div>
  <div><label>Amount (MVR)</label><input id="saleAmount" type="number" min="0" step=".01" required></div>
  <div><label>Amount received (MVR)</label><input id="salePaid" type="number" min="0" step=".01" value="0" required></div>
